@@ -1,0 +1,6 @@
+pyproject.toml
+alma.egg-info/PKG-INFO
+alma.egg-info/SOURCES.txt
+alma.egg-info/dependency_links.txt
+alma.egg-info/requires.txt
+alma.egg-info/top_level.txt

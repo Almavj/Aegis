@@ -1,0 +1,2 @@
+aiohttp<4,>=3.9
+textual<2,>=1.0
