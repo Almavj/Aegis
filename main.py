@@ -1,23 +1,23 @@
-"""Entry point — CLI runner for Alma."""
+"""Entry point — CLI runner for Aegis."""
 
 import argparse
 import asyncio
 
-from alma.core.cve import NistNvdApi
-from alma.core.credentials import CredentialCache
-from alma.core.exploit import Exploit
-from alma.core.orchestrator import EngagementStatus, Orchestrator
-from alma.core.payload import ScriptPayload
-from alma.core.reporting import JsonReportBuilder, MarkdownReportBuilder
-from alma.core.scanner import ConnectScanner, NmapScanner
-from alma.core.session import TcpSessionManager
-from alma.core.vulnerability import VulnerabilityEngine
-from alma.modules import discover_modules
-from alma.utils.logger import AlmaLogger
+from aegis.core.cve import NistNvdApi
+from aegis.core.credentials import CredentialCache
+from aegis.core.exploit import Exploit
+from aegis.core.orchestrator import EngagementStatus, Orchestrator
+from aegis.core.payload import ScriptPayload
+from aegis.core.reporting import JsonReportBuilder, MarkdownReportBuilder
+from aegis.core.scanner import ConnectScanner, NmapScanner
+from aegis.core.session import TcpSessionManager
+from aegis.core.vulnerability import VulnerabilityEngine
+from aegis.modules import discover_modules
+from aegis.utils.logger import AegisLogger
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="alma", description="Modular offensive security framework")
+    p = argparse.ArgumentParser(prog="aegis", description="Modular offensive security framework")
     p.add_argument("targets", nargs="*", help="Target CIDR ranges or hostnames")
     p.add_argument("-p", "--ports", nargs="*", type=int, help="Port list (default: top-1000)")
     p.add_argument("--fast", action="store_true", help="Fast mode (fewer probes)")
@@ -43,14 +43,14 @@ async def main() -> None:
     discover_modules()
 
     if args.list_modules:
-        print("Alma exploit modules:")
+        print("Aegis exploit modules:")
         for name, cls in Exploit.list_available().items():
             rank_name = cls.rank.name if hasattr(cls, "rank") else "AVERAGE"
             print(f"  {name:30s}  [{rank_name:10s}]  {cls.description}")
         return
 
     if args.tui and not args.headless:
-        from alma.ui.app import run_tui
+        from aegis.ui.app import run_tui
         run_tui()
         return
 
@@ -58,8 +58,8 @@ async def main() -> None:
         print("No targets specified. Use --help for usage.")
         return
 
-    log = AlmaLogger("alma", log_dir=args.log_dir).get()
-    log.info("Alma v0.1.0 starting — %d exploit modules loaded", len(Exploit._registry))
+    log = AegisLogger("aegis", log_dir=args.log_dir).get()
+    log.info("Aegis v0.1.0 starting — %d exploit modules loaded", len(Exploit._registry))
 
     import shutil
     if shutil.which("nmap"):

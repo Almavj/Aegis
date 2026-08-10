@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from alma.utils.errors import SessionError
-from alma.utils.logger import AlmaLogger
+from aegis.utils.errors import SessionError
+from aegis.utils.logger import AegisLogger
 
 
 HEARTBEAT_INTERVAL = 15.0
@@ -203,7 +203,7 @@ class SessionManager(ABC):
         self._sessions: dict[str, Session] = {}
         self._pivot_table: dict[str, list[PivotRoute]] = {}
         self._server: asyncio.AbstractServer | None = None
-        self._log = AlmaLogger("session-mgr").get()
+        self._log = AegisLogger("session-mgr").get()
 
     @abstractmethod
     async def listen(self, bind: str = "0.0.0.0", port: int = 4444) -> None:

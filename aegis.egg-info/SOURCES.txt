@@ -1,0 +1,7 @@
+pyproject.toml
+aegis.egg-info/PKG-INFO
+aegis.egg-info/SOURCES.txt
+aegis.egg-info/dependency_links.txt
+aegis.egg-info/requires.txt
+aegis.egg-info/top_level.txt
+tests/test_imports.py

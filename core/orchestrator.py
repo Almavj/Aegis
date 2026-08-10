@@ -8,19 +8,19 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from alma.core.credentials import Credential, CredentialCache
-from alma.core.cve import BatchCveAggregator, CVEMatch, CVEDataSource
-from alma.core.exploit import Exploit, ExploitPayload, ExploitRank, ExploitResult, ExploitTarget
-from alma.core.payload import PayloadGenerator, ScriptPayload, ShellcodePayload
-from alma.core.privesc import PrivescEngine, PrivescResult
-from alma.core.reporting import (
+from aegis.core.credentials import Credential, CredentialCache
+from aegis.core.cve import BatchCveAggregator, CVEMatch, CVEDataSource
+from aegis.core.exploit import Exploit, ExploitPayload, ExploitRank, ExploitResult, ExploitTarget
+from aegis.core.payload import PayloadGenerator, ScriptPayload, ShellcodePayload
+from aegis.core.privesc import PrivescEngine, PrivescResult
+from aegis.core.reporting import (
     Finding,
     JsonReportBuilder,
     MarkdownReportBuilder,
     ReportBuilder,
     ReportFormat,
 )
-from alma.core.scanner import (
+from aegis.core.scanner import (
     SCAN_PROFILE_AGGRESSIVE,
     SCAN_PROFILE_BALANCED,
     SCAN_PROFILE_STEALTH,
@@ -30,11 +30,11 @@ from alma.core.scanner import (
     ServiceDiscovery,
     SessionScanner,
 )
-from alma.core.session import Session, SessionManager
-from alma.core.vulnerability import Confidence, VulnerabilityEngine, VulnerabilityFinding
-from alma.utils.errors import AlmaError, ScanError
-from alma.utils.logger import AlmaLogger
-from alma.utils.threading import TaskPool
+from aegis.core.session import Session, SessionManager
+from aegis.core.vulnerability import Confidence, VulnerabilityEngine, VulnerabilityFinding
+from aegis.utils.errors import AegisError, ScanError
+from aegis.utils.logger import AegisLogger
+from aegis.utils.threading import TaskPool
 
 
 RETRY_LIMIT = 3
@@ -90,7 +90,7 @@ class ProgressReporter(Protocol):
 
 def _write_json_status(status: EngagementStatus) -> None:
     try:
-        with open("/tmp/alma_status.json", "w") as f:
+        with open("/tmp/aegis_status.json", "w") as f:
             json.dump(status.to_dict(), f, indent=2)
     except OSError:
         pass
@@ -136,7 +136,7 @@ async def retry_async(fn, retries: int = RETRY_LIMIT, delay: float = RETRY_DELAY
             last_exc = e
             if attempt < retries:
                 await asyncio.sleep(delay * attempt)
-    raise last_exc or AlmaError(f"{label} failed after {retries} retries")
+    raise last_exc or AegisError(f"{label} failed after {retries} retries")
 
 
 class Orchestrator:
@@ -164,7 +164,7 @@ class Orchestrator:
         self._pool = task_pool or TaskPool(max_workers=20)
         self._cred_cache = cred_cache or CredentialCache()
         self._privesc = privesc_engine or PrivescEngine()
-        self._log = AlmaLogger("orchestrator", log_dir=log_dir).get()
+        self._log = AegisLogger("orchestrator", log_dir=log_dir).get()
 
         self._discoveries: list[ServiceDiscovery] = []
         self._vuln_findings: list[VulnerabilityFinding] = []
@@ -195,7 +195,7 @@ class Orchestrator:
         recursive: bool = False,
         max_recursion_depth: int = 2,
     ) -> None:
-        self._log.info("Alma engagement started — targets=%s", targets)
+        self._log.info("Aegis engagement started — targets=%s", targets)
         self._scan_max_depth = max_recursion_depth
         self._status = EngagementStatus()
         self._status.started_at = time.time()
@@ -211,7 +211,7 @@ class Orchestrator:
 
             await self._phase_report()
 
-        except AlmaError:
+        except AegisError:
             self._log.exception("Fatal error — aborting engagement")
             self._status.phase = "failed"
             self._report_progress()
@@ -221,7 +221,7 @@ class Orchestrator:
 
         self._status.phase = "completed"
         self._report_progress()
-        self._log.info("Alma engagement complete")
+        self._log.info("Aegis engagement complete")
 
     # ------------------------------------------------------------------
     # Recursive scan-exploit-pivot loop
@@ -641,8 +641,8 @@ class Orchestrator:
         self._status.phase = "reporting"
         self._report_progress()
 
-        md_path = "/tmp/alma_report.md"
-        json_path = "/tmp/alma_report.json"
+        md_path = "/tmp/aegis_report.md"
+        json_path = "/tmp/aegis_report.json"
         await self._report.export(ReportFormat.MARKDOWN, md_path)
         await self._report.export(ReportFormat.JSON, json_path)
         self._log.info("Reports written — %s, %s", md_path, json_path)

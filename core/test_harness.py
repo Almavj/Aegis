@@ -5,14 +5,14 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from alma.core.credentials import Credential, CredentialCache
-from alma.core.cve import CVEDataSource, CVEMatch
-from alma.core.exploit import Exploit, ExploitResult, ExploitTarget
-from alma.core.orchestrator import EngagementStatus, Orchestrator
-from alma.core.scanner import PortScanResult, Scanner, ServiceDiscovery
-from alma.core.session import Session, SessionManager
-from alma.core.vulnerability import VulnerabilityEngine
-from alma.utils.logger import AlmaLogger
+from aegis.core.credentials import Credential, CredentialCache
+from aegis.core.cve import CVEDataSource, CVEMatch
+from aegis.core.exploit import Exploit, ExploitResult, ExploitTarget
+from aegis.core.orchestrator import EngagementStatus, Orchestrator
+from aegis.core.scanner import PortScanResult, Scanner, ServiceDiscovery
+from aegis.core.session import Session, SessionManager
+from aegis.core.vulnerability import VulnerabilityEngine
+from aegis.utils.logger import AegisLogger
 
 
 @dataclass
@@ -147,7 +147,7 @@ class FakeCveDataSource(CVEDataSource):
 class FakeSessionManager:
     def __init__(self) -> None:
         self._sessions: dict[str, FakeSession] = {}
-        self._log = AlmaLogger("fake-session-mgr").get()
+        self._log = AegisLogger("fake-session-mgr").get()
 
     async def register(self, session: Session) -> str:
         return session.id
@@ -213,7 +213,7 @@ async def test_recursive_loop_terminates() -> bool:
 
 
 async def test_batch_cve_aggregation() -> bool:
-    from alma.core.cve import BatchCveAggregator
+    from aegis.core.cve import BatchCveAggregator
 
     source = FakeCveDataSource()
     source.add_match("http 2.4.49", make_cve_match())

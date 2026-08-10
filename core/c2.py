@@ -13,8 +13,8 @@ from hashlib import blake2b, pbkdf2_hmac, sha256
 from typing import Any
 from collections.abc import Callable
 
-from alma.utils.errors import C2Error
-from alma.utils.logger import AlmaLogger
+from aegis.utils.errors import C2Error
+from aegis.utils.logger import AegisLogger
 
 
 FRAME_HEADER_SIZE = 5
@@ -161,7 +161,7 @@ class C2Crypto:
         if key is None:
             key = os.urandom(32)
         if len(key) < 32:
-            key = pbkdf2_hmac("sha256", key, b"alma-c2-salt", 100000, dklen=32)
+            key = pbkdf2_hmac("sha256", key, b"aegis-c2-salt", 100000, dklen=32)
         self._enc_key = key[:16]
         self._auth_key = key[16:32]
         self._seq_send: int = 0
@@ -224,7 +224,7 @@ class C2Multiplexer:
         self._send_queue: asyncio.Queue[Frame] = asyncio.Queue()
         self._ack_waiter: dict[int, asyncio.Future[None]] = {}
         self._send_seq = 0
-        self._log = AlmaLogger("c2-mux").get()
+        self._log = AegisLogger("c2-mux").get()
 
     async def start(self) -> None:
         asyncio.create_task(self._send_loop())
@@ -335,7 +335,7 @@ class C2Session:
         self._last_seq_recv = 0
         self._lock = asyncio.Lock()
         self._reconnect_handler: Callable | None = None
-        self._log = AlmaLogger(f"c2-session-{session_id[:8]}").get()
+        self._log = AegisLogger(f"c2-session-{session_id[:8]}").get()
 
     async def connect(self, host: str, port: int) -> None:
         reader, writer = await asyncio.open_connection(host, port)
@@ -425,7 +425,7 @@ class C2Server:
         self._crypto = crypto or C2Crypto()
         self._sessions: dict[str, C2SessionInfo] = {}
         self._pending_buf: dict[str, list[bytes]] = {}
-        self._log = AlmaLogger("c2-server").get()
+        self._log = AegisLogger("c2-server").get()
 
     async def listen(self, host: str = "0.0.0.0", port: int = 4444,
                      session_handler: Callable | None = None) -> None:

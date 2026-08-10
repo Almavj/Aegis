@@ -1,10 +1,10 @@
-from .logger import AlmaLogger
-from .errors import AlmaError, ScanError, ExploitError, SessionError, PayloadError
+from .logger import AegisLogger
+from .errors import AegisError, ScanError, ExploitError, SessionError, PayloadError
 from .threading import TaskPool, CancellableTask
 
 __all__ = [
-    "AlmaLogger",
-    "AlmaError",
+    "AegisLogger",
+    "AegisError",
     "ScanError",
     "ExploitError",
     "SessionError",

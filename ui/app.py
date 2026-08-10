@@ -20,13 +20,13 @@ from textual.widgets import (
     TabPane,
 )
 
-from alma.core.orchestrator import EngagementStatus
+from aegis.core.orchestrator import EngagementStatus
 
 
 status_queue: asyncio.Queue[EngagementStatus] = asyncio.Queue(maxsize=50)
 
 
-class AlmaTui(App):
+class AegisTui(App):
     CSS = """
     Screen {
         background: $surface;
@@ -106,7 +106,7 @@ class AlmaTui(App):
     def compose(self) -> ComposeResult:
         yield Header()
         with Container():
-            yield Static("Alma — Modular Offensive Security Framework", id="title")
+            yield Static("Aegis — Modular Offensive Security Framework", id="title")
             with Horizontal(id="control-row"):
                 yield Input(placeholder="Target CIDR (e.g. 192.168.1.0/24)", id="target-input")
                 yield Button("Run", id="run-btn", variant="primary")
@@ -147,7 +147,7 @@ class AlmaTui(App):
     def on_mount(self) -> None:
         asyncio.create_task(self._watch_status())
         log = self.query_one("#log-widget", RichLog)
-        log.write("Alma TUI ready. Enter a target and press Run.")
+        log.write("Aegis TUI ready. Enter a target and press Run.")
 
     async def _watch_status(self) -> None:
         while True:
@@ -191,15 +191,15 @@ class AlmaTui(App):
         self.exit()
 
     async def _launch_engagement(self, target: str) -> None:
-        from alma.core.orchestrator import Orchestrator
-        from alma.core.scanner import ConnectScanner, NmapScanner
-        from alma.core.session import TcpSessionManager
-        from alma.core.vulnerability import VulnerabilityEngine
-        from alma.core.credentials import CredentialCache
-        from alma.core.cve import NistNvdApi
-        from alma.core.payload import ScriptPayload
-        from alma.core.reporting import MarkdownReportBuilder
-        from alma.modules import discover_modules
+        from aegis.core.orchestrator import Orchestrator
+        from aegis.core.scanner import ConnectScanner, NmapScanner
+        from aegis.core.session import TcpSessionManager
+        from aegis.core.vulnerability import VulnerabilityEngine
+        from aegis.core.credentials import CredentialCache
+        from aegis.core.cve import NistNvdApi
+        from aegis.core.payload import ScriptPayload
+        from aegis.core.reporting import MarkdownReportBuilder
+        from aegis.modules import discover_modules
 
         import shutil
         discover_modules()
@@ -233,5 +233,5 @@ class AlmaTui(App):
 
 
 def run_tui() -> None:
-    app = AlmaTui()
+    app = AegisTui()
     app.run()

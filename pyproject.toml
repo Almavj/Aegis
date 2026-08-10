@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "alma"
+name = "aegis"
 version = "0.1.0"
 description = "Autonomous offensive security framework"
 requires-python = ">=3.11"
@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["alma*"]
+include = ["aegis*"]

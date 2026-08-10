@@ -3,11 +3,11 @@ import sys
 from pathlib import Path
 
 
-class AlmaLogger:
+class AegisLogger:
     """Centralised logging with structured output and per-module levels."""
 
     def __init__(self, name: str, level: int = logging.DEBUG, log_dir: str | None = None) -> None:
-        self._logger = logging.getLogger(f"alma.{name}")
+        self._logger = logging.getLogger(f"aegis.{name}")
         self._logger.setLevel(level)
 
         if not self._logger.handlers:

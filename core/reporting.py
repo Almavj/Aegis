@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
-from alma.core.vulnerability import VulnerabilityFinding
+from aegis.core.vulnerability import VulnerabilityFinding
 
 
 class ReportFormat(Enum):
@@ -82,7 +82,7 @@ def _write_file(path: str, content: str) -> None:
             f.write(content)
     except PermissionError:
         import tempfile
-        fd, fallback = tempfile.mkstemp(suffix=".md", prefix="alma_report_", text=True)
+        fd, fallback = tempfile.mkstemp(suffix=".md", prefix="aegis_report_", text=True)
         with os.fdopen(fd, "w") as f:
             f.write(content)
         print(f"Warning: could not write to {path}, wrote to {fallback} instead")
@@ -96,7 +96,7 @@ class ReportBuilder(ABC):
     session metadata, scan summaries, and exploited-host details.
     """
 
-    def __init__(self, title: str = "Alma Pentest Report") -> None:
+    def __init__(self, title: str = "Aegis Pentest Report") -> None:
         self._title = title
         self._findings: list[Finding] = []
         self._scan_summary: dict[str, Any] = {}

@@ -6,9 +6,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Protocol
 
-from alma.core.session import Session
-from alma.utils.errors import ScanError
-from alma.utils.logger import AlmaLogger
+from aegis.core.session import Session
+from aegis.utils.errors import ScanError
+from aegis.utils.logger import AegisLogger
 
 
 @dataclass(frozen=True)
@@ -54,7 +54,7 @@ class Scanner(ABC):
         self._rate_limit = rate_limit
         self._timeout = timeout
         self._progress: ScanProgressCallback | None = None
-        self._log = AlmaLogger(self.__class__.__name__).get()
+        self._log = AegisLogger(self.__class__.__name__).get()
 
     def set_progress_callback(self, cb: ScanProgressCallback | None) -> None:
         self._progress = cb

@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from alma.utils.errors import PayloadError
-from alma.utils.logger import AlmaLogger
+from aegis.utils.errors import PayloadError
+from aegis.utils.logger import AegisLogger
 
 
 @dataclass
@@ -34,7 +34,7 @@ class AmsiBypass:
 class AmsiBypassRegistry:
     def __init__(self) -> None:
         self._bypasses: dict[str, AmsiBypass] = {}
-        self._log = AlmaLogger("amsi-registry").get()
+        self._log = AegisLogger("amsi-registry").get()
         self._register_defaults()
 
     def _register_defaults(self) -> None:
@@ -213,7 +213,7 @@ class StagingServer:
         self._started_at: float = 0.0
         self._one_time: bool = True
         self._consumed: bool = False
-        self._log = AlmaLogger("staging").get()
+        self._log = AegisLogger("staging").get()
 
     def set_stage2(self, payload: bytes, token: str | None = None,
                    one_time: bool = True, ttl: float | None = 300.0) -> None:
@@ -302,7 +302,7 @@ class PayloadGenerator(ABC):
         self._lport = lport
         self._arch = arch
         self._amsi = amsi_registry or AmsiBypassRegistry()
-        self._log = AlmaLogger(self.__class__.__name__).get()
+        self._log = AegisLogger(self.__class__.__name__).get()
 
     @abstractmethod
     async def generate(self, payload_type: str = "reverse_tcp", **kwargs: Any) -> Payload:

@@ -7,9 +7,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from alma.core.scanner import ServiceDiscovery
-from alma.utils.errors import AlmaError
-from alma.utils.logger import AlmaLogger
+from aegis.core.scanner import ServiceDiscovery
+from aegis.utils.errors import AegisError
+from aegis.utils.logger import AegisLogger
 
 
 @dataclass(frozen=True)
@@ -38,11 +38,11 @@ class NistNvdApi(CVEDataSource):
 
     def __init__(self, cache_path: str | None = None, api_key: str | None = None) -> None:
         self._api_key = api_key
-        self._cache_path = Path(cache_path) if cache_path else Path("/tmp/alma_nvd_cache.json")
+        self._cache_path = Path(cache_path) if cache_path else Path("/tmp/aegis_nvd_cache.json")
         self._cache: dict[str, list[dict[str, Any]]] = {}
         self._last_call = 0.0
         self._lock = asyncio.Lock()
-        self._log = AlmaLogger("nvd-api").get()
+        self._log = AegisLogger("nvd-api").get()
         self._load_cache()
 
     def _load_cache(self) -> None:
@@ -84,7 +84,7 @@ class NistNvdApi(CVEDataSource):
             "keywordExactMatch": "false",
             "resultsPerPage": "20",
         }
-        headers = {"User-Agent": "Alma/1.0"}
+        headers = {"User-Agent": "Aegis/1.0"}
         if self._api_key:
             params["apiKey"] = self._api_key
 
@@ -163,7 +163,7 @@ class BatchCveAggregator:
     def __init__(self, source: CVEDataSource) -> None:
         self._source = source
         self._cache: dict[str, list[CVEMatch]] = {}
-        self._log = AlmaLogger("batch-cve").get()
+        self._log = AegisLogger("batch-cve").get()
 
     def _service_key(self, service: str, banner: str | None) -> str:
         key = service.lower().strip()

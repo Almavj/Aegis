@@ -9,11 +9,11 @@ import importlib
 import pkgutil
 from pathlib import Path
 
-from alma.utils.logger import AlmaLogger
+from aegis.utils.logger import AegisLogger
 
 
 def discover_modules() -> None:
-    log = AlmaLogger("plugin-loader").get()
+    log = AegisLogger("plugin-loader").get()
     exploits_dir = Path(__file__).parent / "exploits"
 
     if not exploits_dir.is_dir():
@@ -24,7 +24,7 @@ def discover_modules() -> None:
     for f in sorted(exploits_dir.iterdir()):
         if not f.name.startswith("exploit_") or not f.name.endswith(".py"):
             continue
-        module_name = f"alma.modules.exploits.{f.stem}"
+        module_name = f"aegis.modules.exploits.{f.stem}"
         try:
             importlib.import_module(module_name)
             log.debug("Loaded module: %s", module_name)
